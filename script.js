@@ -1,5 +1,13 @@
 import { Engine, Render, Runner, Bodies, Composite, Mouse, MouseConstraint, Events, Query, Body } from "matter-js"
 
+import walkRight1 from "./sprites/walkRight1.png"
+import walkRight2 from "./sprites/walkRight2.png"
+import walkLeft1 from "./sprites/walkLeft1.png"
+import walkLeft2 from "./sprites/walkLeft2.png"
+
+const walkFramesLeft = [walkRight1, walkRight2] //oopsie lol
+const walkFramesRight = [walkLeft1, walkLeft2] //oopsie lol
+
 const canvas = document.getElementById("matter-world")
 
 const engine = Engine.create()
@@ -30,10 +38,14 @@ const borders = [
 
 Composite.add(world, borders)
 
-let chicken = Bodies.rectangle(400, 200, 25, 25, {
+let chicken = Bodies.rectangle(400, 200, 30, 30, {
     restitution: 0.9,
     render: {
-        fillStyle: "white"
+        sprite: {
+            texture: walkFramesRight[0],
+            xScale: 2,
+            yScale: 2,
+        }
     }
 })
 
@@ -105,12 +117,24 @@ Events.on(mouseConstraint, "mousedown", function(e) {
 })
 
 let firstHit
+let facingRight = true
 
 function chickenAI() {
 
     const randDir = () => {
         const a = Math.random() * Math.PI * 2
-        return { x: Math.cos(a), y: Math.sin(a) }
+        const dir = { x: Math.cos(a), y: Math.sin(a) }
+
+        facingRight = dir.x >= 0
+
+        if (!facingRight) {
+            chicken.render.sprite.texture = walkFramesRight[0]
+        } else {
+            chicken.render.sprite.texture = walkFramesLeft[0]
+        }
+
+        console.log(facingRight)
+        return dir
     }
 
     const dir = randDir()
