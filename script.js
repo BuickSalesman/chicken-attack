@@ -29,7 +29,7 @@ const borders = [
 
 Composite.add(world, borders)
 
-var chicken = Bodies.rectangle(400, 200, 32, 32, {
+let chicken = Bodies.rectangle(400, 200, 32, 32, {
     restitution: 0.9,
     render: {
         fillStyle: "white"
@@ -37,6 +37,26 @@ var chicken = Bodies.rectangle(400, 200, 32, 32, {
 })
 
 Composite.add(world, chicken)
+
+let house1 = Bodies.rectangle(200, 400, 300, 300, {
+    isStatic: true,
+    restitution: 0.8,
+    render: {
+        fillStyle: "red"
+    }
+})
+
+Composite.add(world, house1)
+
+let house2 = Bodies.rectangle(600, 150, 200, 100, {
+    isStatic: true,
+    restitution: 0.8,
+    render: {
+        fillStyle: "blue"
+    }
+})
+
+Composite.add(world, house2)
 
 const mouse = Mouse.create(render.canvas)
 const mouseConstraint = MouseConstraint.create(engine, {
@@ -77,13 +97,12 @@ Events.on(mouseConstraint, "mousedown", function(e) {
             chickenHit = false
             console.log("chicken fine!")
             chicken.render.fillStyle = "white"
+
+            if (!loopAI) {
+                loopAI = setInterval(chickenAI, 1200)
+            }
         }, 2000)
     }
-})
-
-Events.on(engine, "beforeUpdate", () => {
-    Body.setAngularVelocity(chicken, 0)
-    Body.setAngle(chicken, 0)
 })
 
 function chickenAI() {
@@ -99,7 +118,7 @@ function chickenAI() {
         y: dir.y * .005
     })
 
-    const walkDuration = 500 + Math.random() * 700
+    const walkDuration = 400 + Math.random() * 700
 
     setTimeout(() => {
         Body.setVelocity(chicken, { x: 0, y: 0 })
@@ -107,4 +126,15 @@ function chickenAI() {
     }, walkDuration)
 }
 
-const loopAI = setInterval(chickenAI, 1200)
+let loopAI = null
+loopAI = setInterval(chickenAI, 1200)
+
+Events.on(engine, "beforeUpdate", () => {
+    Body.setAngularVelocity(chicken, 0)
+    Body.setAngle(chicken, 0)
+
+    if (chickenHit) {
+        clearInterval(loopAI)
+        loopAI = null
+    }
+})
