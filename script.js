@@ -100,7 +100,7 @@ Events.on(mouseConstraint, "mousedown", function(e) {
             if (!loopAI) {
                 loopAI = setInterval(chickenAI, 1200)
             }
-        }, 3000)
+        }, 2800)
     }
 })
 

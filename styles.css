@@ -9,8 +9,8 @@ html {
 }
 
 #matter-world {
-    width: 50vw;
+    width: 700px;
+    height: 700px;
     outline: 1px solid black;
-    height: 80vh;
     background: none;
 }
