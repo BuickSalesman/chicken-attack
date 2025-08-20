@@ -30,7 +30,7 @@ const borders = [
 
 Composite.add(world, borders)
 
-let chicken = Bodies.rectangle(400, 200, 32, 32, {
+let chicken = Bodies.rectangle(400, 200, 25, 25, {
     restitution: 0.9,
     render: {
         fillStyle: "white"
