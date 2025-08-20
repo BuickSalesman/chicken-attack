@@ -5,10 +5,12 @@ html {
     display: flex;
     justify-content: center;
     align-items: center;
+    background: none;
 }
 
 #matter-world {
     width: 50vw;
     outline: 1px solid black;
     height: 80vh;
+    background: none;
 }

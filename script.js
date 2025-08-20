@@ -9,7 +9,8 @@ const render = Render.create({
     canvas,
     engine,
     options: {
-        wireframes: false
+        wireframes: false,
+        background: "green"
     }
 })
 
@@ -91,11 +92,9 @@ Events.on(mouseConstraint, "mousedown", function(e) {
     const bodies = Query.point([chicken], mousePosition)
     if (bodies.length > 0) {
         chickenHit = true
-        console.log("chicken hit")
         chicken.render.fillStyle = "red"
         setTimeout(() => {
             chickenHit = false
-            console.log("chicken fine!")
             chicken.render.fillStyle = "white"
 
             if (!loopAI) {
@@ -133,7 +132,6 @@ loopAI = setInterval(chickenAI, 1000 + Math.random() * 500)
 
 Events.on(engine, "beforeUpdate", () => {
 
-    console.log(firstHit)
     Body.setAngularVelocity(chicken, 0)
     Body.setAngle(chicken, 0)
 
