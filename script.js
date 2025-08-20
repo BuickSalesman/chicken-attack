@@ -120,16 +120,16 @@ function chickenAI() {
         y: dir.y * .005
     })
 
-    const walkDuration = 400 + Math.random() * 700
+    const walkDuration = 200 + Math.random() * 400
 
     setTimeout(() => {
         Body.setVelocity(chicken, { x: 0, y: 0 })
         Body.setAngularVelocity(chicken, 0)
-    }, walkDuration)
+    }, walkDuration + walkDuration)
 }
 
 let loopAI = null
-loopAI = setInterval(chickenAI, 1200)
+loopAI = setInterval(chickenAI, 1000 + Math.random() * 500)
 
 Events.on(engine, "beforeUpdate", () => {
 
