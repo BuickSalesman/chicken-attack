@@ -136,5 +136,19 @@ Events.on(engine, "beforeUpdate", () => {
     if (chickenHit) {
         clearInterval(loopAI)
         loopAI = null
+
+        const dx = chicken.position.x - mouse.position.x
+        const dy = chicken.position.y - mouse.position.y
+
+        const d = Math.hypot(dx, dy)
+
+        const ux = dx / d;
+        const uy = dy / d;
+
+        const mag = 0.00015
+
+        const force = { x: ux * mag, y: uy * mag }
+
+        Body.applyForce(chicken, chicken.position, force)
     }
 })
