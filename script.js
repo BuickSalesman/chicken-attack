@@ -1,4 +1,4 @@
-import { Engine, Render, Runner, Bodies, Composite, Mouse, MouseConstraint, Events, Query } from "matter-js"
+import { Engine, Render, Runner, Bodies, Composite, Mouse, MouseConstraint, Events, Query, Body } from "matter-js"
 
 const canvas = document.getElementById("matter-world")
 
@@ -8,6 +8,9 @@ const world = engine.world
 const render = Render.create({
     canvas,
     engine,
+    options: {
+        wireframes: false
+    }
 })
 
 world.gravity.x = 0
@@ -26,17 +29,26 @@ const borders = [
 
 Composite.add(world, borders)
 
-var chicken = Bodies.rectangle(400, 200, 32, 32)
+var chicken = Bodies.rectangle(400, 200, 32, 32, {
+    restitution: 0.9,
+    render: {
+        fillStyle: "white"
+    }
+})
 
 Composite.add(world, chicken)
 
 const mouse = Mouse.create(render.canvas)
 const mouseConstraint = MouseConstraint.create(engine, {
     mouse: mouse,
+    collisionFilter: {
+        mask: 0
+    },
     constraint: {
-        stiffness: 0.2,
+        stiffness: 0,
+        angularStiffness: 0,
         render: {
-            visible: false
+            visible: true
         }
     }
 })
@@ -60,9 +72,39 @@ Events.on(mouseConstraint, "mousedown", function(e) {
     if (bodies.length > 0) {
         chickenHit = true
         console.log("chicken hit")
+        chicken.render.fillStyle = "red"
         setTimeout(() => {
             chickenHit = false
             console.log("chicken fine!")
+            chicken.render.fillStyle = "white"
         }, 2000)
     }
 })
+
+Events.on(engine, "beforeUpdate", () => {
+    Body.setAngularVelocity(chicken, 0)
+    Body.setAngle(chicken, 0)
+})
+
+function chickenAI() {
+
+    const randDir = () => {
+        const a = Math.random() * Math.PI * 2
+        return { x: Math.cos(a), y: Math.sin(a) }
+    }
+
+    const dir = randDir()
+    Body.applyForce(chicken, chicken.position, {
+        x: dir.x * .005,
+        y: dir.y * .005
+    })
+
+    const walkDuration = 500 + Math.random() * 700
+
+    setTimeout(() => {
+        Body.setVelocity(chicken, { x: 0, y: 0 })
+        Body.setAngularVelocity(chicken, 0)
+    }, walkDuration)
+}
+
+const loopAI = setInterval(chickenAI, 1200)
