@@ -5,8 +5,8 @@ import walkRight2 from "./sprites/walkRight2.png"
 import walkLeft1 from "./sprites/walkLeft1.png"
 import walkLeft2 from "./sprites/walkLeft2.png"
 
-const walkFramesLeft = [walkRight1, walkRight2] //oopsie lol
-const walkFramesRight = [walkLeft1, walkLeft2] //oopsie lol
+const walkFramesRight = [walkRight1, walkRight2]
+const walkFramesLeft = [walkLeft1, walkLeft2]
 
 const canvas = document.getElementById("matter-world")
 
@@ -42,7 +42,7 @@ let chicken = Bodies.rectangle(400, 200, 30, 30, {
     restitution: 0.9,
     render: {
         sprite: {
-            texture: walkFramesRight[0],
+            texture: walkFramesLeft[0],
             xScale: 2,
             yScale: 2,
         }
@@ -97,6 +97,7 @@ Runner.run(runner, engine)
 
 
 let chickenHit = false
+let loopDuration = 1000 + Math.random() * 1000
 
 Events.on(mouseConstraint, "mousedown", function(e) {
     const mousePosition = e.mouse.position
@@ -104,13 +105,10 @@ Events.on(mouseConstraint, "mousedown", function(e) {
     const bodies = Query.point([chicken], mousePosition)
     if (bodies.length > 0) {
         chickenHit = true
-        chicken.render.fillStyle = "red"
         setTimeout(() => {
             chickenHit = false
-            chicken.render.fillStyle = "white"
-
             if (!loopAI) {
-                loopAI = setInterval(chickenAI, 1200)
+                loopAI = setInterval(chickenAI, loopDuration)
             }
         }, 2800)
     }
@@ -125,15 +123,6 @@ function chickenAI() {
         const a = Math.random() * Math.PI * 2
         const dir = { x: Math.cos(a), y: Math.sin(a) }
 
-        facingRight = dir.x >= 0
-
-        if (!facingRight) {
-            chicken.render.sprite.texture = walkFramesRight[0]
-        } else {
-            chicken.render.sprite.texture = walkFramesLeft[0]
-        }
-
-        console.log(facingRight)
         return dir
     }
 
@@ -149,10 +138,11 @@ function chickenAI() {
         Body.setVelocity(chicken, { x: 0, y: 0 })
         Body.setAngularVelocity(chicken, 0)
     }, walkDuration + walkDuration)
+    loopDuration = 1000 + Math.random() * 1000
 }
 
 let loopAI = null
-loopAI = setInterval(chickenAI, 1000 + Math.random() * 500)
+loopAI = setInterval(chickenAI, loopDuration)
 
 Events.on(engine, "beforeUpdate", () => {
 
@@ -183,3 +173,17 @@ Events.on(engine, "beforeUpdate", () => {
         Body.applyForce(chicken, chicken.position, force)
     }
 })
+
+let lastDir = 1;
+
+Events.on(engine, "afterUpdate", () => {
+    const vx = chicken.velocity.x;
+    const EPS = 0.1;
+
+    if (Math.abs(vx) > EPS) {
+        lastDir = Math.sign(vx);
+    }
+
+    const facingRight = lastDir > 0;
+    chicken.render.sprite.texture = facingRight ? walkFramesRight[0] : walkFramesLeft[0];
+});
