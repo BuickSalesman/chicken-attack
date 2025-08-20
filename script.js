@@ -101,9 +101,11 @@ Events.on(mouseConstraint, "mousedown", function(e) {
             if (!loopAI) {
                 loopAI = setInterval(chickenAI, 1200)
             }
-        }, 2000)
+        }, 3000)
     }
 })
+
+let firstHit
 
 function chickenAI() {
 
@@ -130,10 +132,15 @@ let loopAI = null
 loopAI = setInterval(chickenAI, 1200)
 
 Events.on(engine, "beforeUpdate", () => {
+
+    console.log(firstHit)
     Body.setAngularVelocity(chicken, 0)
     Body.setAngle(chicken, 0)
 
     if (chickenHit) {
+        if (loopAI) {
+            firstHit = 10
+        }
         clearInterval(loopAI)
         loopAI = null
 
@@ -145,7 +152,9 @@ Events.on(engine, "beforeUpdate", () => {
         const ux = dx / d;
         const uy = dy / d;
 
-        const mag = 0.00015
+        const mag = firstHit ? 0.0002 : .0075
+
+        firstHit--
 
         const force = { x: ux * mag, y: uy * mag }
 
